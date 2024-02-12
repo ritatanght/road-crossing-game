@@ -11,7 +11,8 @@ gameScene.preload = function () {
   // load.image(name, path)
   this.load.image("background", "assets/background.png");
   this.load.image("player", "assets/player.png");
-  this.load.image("enemy1", "assets/dragon.png");
+  this.load.image("enemy", "assets/dragon.png");
+  this.load.image("goal", "assets/treasure.png");
 };
 
 // called once after the preload ends
@@ -26,8 +27,13 @@ gameScene.create = function () {
   let gameH = this.sys.game.config.height;
   bg.setPosition(gameW / 2, gameH / 2);
 
+  // player
   this.player = this.add.sprite(50, gameH / 2, "player");
   this.player.setScale(0.5);
+
+  // goal
+  this.goal = this.add.sprite(gameW - 80, gameH / 2, "goal");
+  this.goal.setScale(0.6);
 };
 
 // update is called up to 60 times/second
@@ -35,6 +41,16 @@ gameScene.update = function () {
   // check for active input (left click or touch)
   if (this.input.activePointer.isDown) {
     this.player.x += this.playerSpeed;
+  }
+
+  // player overlap treasure check
+  let playerRect = this.player.getBounds();
+  let goalRect = this.goal.getBounds();
+
+  if (Phaser.Geom.Intersects.RectangleToRectangle(playerRect, goalRect)) {
+    // restart the scene
+    this.scene.restart();
+    return;
   }
 };
 
