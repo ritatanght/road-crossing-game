@@ -1,6 +1,11 @@
 // create a new scene - where all the actions take place
 let gameScene = new Phaser.Scene("Game");
 
+// initiate scene parameters
+gameScene.init = function () {
+  this.playerSpeed = 3;
+};
+
 // load assets
 gameScene.preload = function () {
   // load.image(name, path)
@@ -23,8 +28,14 @@ gameScene.create = function () {
 
   this.player = this.add.sprite(50, gameH / 2, "player");
   this.player.setScale(0.5);
+};
 
-  this.enemy1 = this.add.sprite(100, 100, "enemy1");
+// update is called up to 60 times/second
+gameScene.update = function () {
+  // check for active input (left click or touch)
+  if (this.input.activePointer.isDown) {
+    this.player.x += this.playerSpeed;
+  }
 };
 
 // set the config of the game
