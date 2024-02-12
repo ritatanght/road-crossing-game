@@ -6,6 +6,7 @@ gameScene.preload = function () {
   // load.image(name, path)
   this.load.image("background", "assets/background.png");
   this.load.image("player", "assets/player.png");
+  this.load.image("enemy1", "assets/dragon.png");
 };
 
 // called once after the preload ends
@@ -19,6 +20,11 @@ gameScene.create = function () {
   let gameW = this.sys.game.config.width;
   let gameH = this.sys.game.config.height;
   bg.setPosition(gameW / 2, gameH / 2);
+
+  this.player = this.add.sprite(50, gameH / 2, "player");
+  this.player.setScale(0.5);
+
+  this.enemy1 = this.add.sprite(100, 100, "enemy1");
 };
 
 // set the config of the game
