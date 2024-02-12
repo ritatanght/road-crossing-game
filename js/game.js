@@ -10,6 +10,8 @@ gameScene.init = function () {
   // enemy boundaries
   this.enemyMinY = 80;
   this.enemyMaxY = 280;
+
+  this.isTerminating = false;
 };
 
 // load assets
@@ -78,6 +80,9 @@ gameScene.create = function () {
 
 // update is called up to 60 times/second
 gameScene.update = function () {
+  // don't execute if we are terminating
+  if (this.isTerminating) return;
+
   // check for active input (left click or touch)
   if (this.input.activePointer.isDown) {
     this.player.x += this.playerSpeed;
@@ -88,9 +93,8 @@ gameScene.update = function () {
   let goalRect = this.goal.getBounds();
 
   if (Phaser.Geom.Intersects.RectangleToRectangle(playerRect, goalRect)) {
-    // restart the scene
-    this.scene.restart();
-    return;
+    // end game
+    return this.gameOver();
   }
 
   // get enemies
@@ -113,11 +117,37 @@ gameScene.update = function () {
     let enemyRect = enemies[i].getBounds();
     if (Phaser.Geom.Intersects.RectangleToRectangle(playerRect, enemyRect)) {
       console.log("Game over!");
-      // restart the scene
-      this.scene.restart();
-      return;
+      // end game
+      return this.gameOver();
     }
   }
+};
+
+// add a method to the scene
+gameScene.gameOver = function () {
+  //initiated game over sequece
+  this.isTerminating = true;
+
+  this.cameras.main.shake(500);
+
+  // listen for shake event completion
+  this.cameras.main.on(
+    "camerashakecomplete",
+    function (camera, effect) {
+      this.cameras.main.fade(500);
+    },
+    this
+  );
+
+  this.cameras.main.on(
+    "camerafadeoutcomplete",
+    function (camera, effect) {
+      this.scene.restart();
+    },
+    this
+  );
+
+  // restart the scene
 };
 
 // set the config of the game
